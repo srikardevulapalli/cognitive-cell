@@ -1,0 +1,17 @@
+{
+  "event_id": "evt_pricing_refunds_001",
+  "source": "growth_ops_monitor",
+  "event_type": "metric_anomaly",
+  "statement": "Refund requests doubled after the pricing page update. What should we examine first?",
+  "context": {
+    "world_facts": [],
+    "constraints": ["Prioritize high-signal first checks before broad analysis."],
+    "active_goals": ["identify the first diagnostic step"]
+  },
+  "metadata": {
+    "persona": "growth operations analyst",
+    "time_pressure": "medium"
+  },
+  "interaction_mode": "workflow_component",
+  "autonomy_mode": "suggest"
+}
