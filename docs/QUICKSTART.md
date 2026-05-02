@@ -47,7 +47,7 @@ Set your API key first:
 export OPENAI_API_KEY="your_key_here"
 ~~~
 
-Then:
+Then run:
 
 ~~~bash
 cognitive-cell --event-json examples/event.example.json
@@ -61,4 +61,6 @@ POST /v1/sidecar
 
 ## Cost note
 
-`/health` costs nothing. `/v1/sidecar` and CLI requests call the model.
+`/health` costs nothing.
+
+`/v1/sidecar` and CLI requests call the configured model.
