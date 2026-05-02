@@ -1,5 +1,9 @@
 # Cognitive Cell
 
+[![PyPI version](https://img.shields.io/pypi/v/cognitive-cell.svg)](https://pypi.org/project/cognitive-cell/)
+[![Python versions](https://img.shields.io/pypi/pyversions/cognitive-cell.svg)](https://pypi.org/project/cognitive-cell/)
+
+
 Cognitive Cell is a context-sensitive control stack for workflow AI.
 
 Accepted v9 stack:
