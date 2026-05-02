@@ -3,7 +3,6 @@
 [![PyPI version](https://img.shields.io/pypi/v/cognitive-cell.svg)](https://pypi.org/project/cognitive-cell/)
 [![Python versions](https://img.shields.io/pypi/pyversions/cognitive-cell.svg)](https://pypi.org/project/cognitive-cell/)
 
-
 Cognitive Cell is a context-sensitive control stack for workflow AI.
 
 Accepted v9 stack:
@@ -24,24 +23,6 @@ The system separates:
 
 This lets the same input behave differently depending on context, posture, urgency, role, and workflow constraints.
 
-## Current evidence
-
-Fresh holdout-v1, 100 cases:
-
-| Judge | Architecture preference | Baseline preference |
-|---|---:|---:|
-| gpt-4.1 primary | 0.6200 | 0.3800 |
-| gpt-5.5 second, combined 40+60 | 0.5575 | 0.4425 |
-| Two-judge mean | 0.58875 | 0.41125 |
-
-Safe claim:
-
-> On a fresh 100-case holdout, the frozen v9 cognitive-cell stack beat a plain strong-model baseline under two standardized OpenAI judges, with mean architecture preference around 0.589.
-
-## Caution
-
-This is an engineering validation result, not a universal claim of superiority over frontier models. Larger benchmarks, human evaluation, ablations, and cross-provider validation are still needed.
-
 ## Install
 
 ~~~bash
@@ -51,41 +32,21 @@ pip install "cognitive-cell[server]"
 ## Python usage
 
 ~~~python
-from cognitive_cell.lego import CognitiveCellV9, CognitiveCellRequest
+from cognitive_cell import CognitiveCellRequest, CognitiveCellV9
 
 cell = CognitiveCellV9()
 
-result = cell.run(
-    CognitiveCellRequest(
-        statement="The package label shows the wrong city.",
-        context_snapshot={
-            "world_facts": [
-                {
-                    "fact_id": "f1",
-                    "fact_type": "world_fact",
-                    "fact_text": "The package has not left the warehouse yet.",
-                }
-            ],
-            "constraints": ["Optimize for low-cost correction."],
-            "active_goals": ["determine the first operational step"],
-        },
-        metadata={"persona": "ops analyst", "time_pressure": "medium"},
-        interaction_mode="workflow_component",
-        autonomy_mode="suggest",
-    )
+request = CognitiveCellRequest(
+    statement="Blue colour is observed.",
+    interaction_mode="workflow_component",
+    autonomy_mode="log",
 )
+
+result =l.run(request)
 
 print(result.response_text)
 print(result.trace)
 ~~~
-
-## Known weaknesses
-
-- Atomic observation remains weaker because pure logging competes against advice/explanation.
-- Contextual observation remains mixed when direct action beats record/analyze behavior.
-- Persona shift is weaker under the second judge.
-- Writing support is improved but not consistently superior.
-
 
 ## CLI usage
 
@@ -95,7 +56,7 @@ Create an event JSON file, then run:
 cognitive-cell --event-json examples/event.example.json
 ~~~
 
-This calls the model and may incur API cost.
+This calls the configured model and may incur API cost.
 
 ## HTTP sidecar usage
 
@@ -119,6 +80,46 @@ curl -s -X POST http://127.0.0.1:8000/v1/sidecar \
   -d @examples/event.example.json
 ~~~
 
+## Example event
+
+~~~json
+{
+  "event_id": "evt_pricing_refunds_001",
+  "source": "growth_ops_monitor",
+  "event_type": "metric_anomaly",
+  "statement": "Refund requests doubled after the pricing page update. What should we examine first?",
+  "context": {
+    "world_facts": [],
+    "constraints": ["Prioritize high-signal first checks before broad analysis."],
+    "active_goals": ["identify the first diagnostic step"]
+  },
+  "metadata": {
+    "persona": "growth operations analyst",
+    "time_pressure": "medium"
+  },
+  "interaction_mode": "workflow_component",
+  "autonomy_mode": "suggest"
+}
+~~~
+
+## Current evidence
+
+Fresh holdout-v1, 100 cases:
+
+| Judge | Architecture preference | Baseline preference |
+|---|---:|---:|
+| gpt-4.1 primary | 0.6200 | 0.3800 |
+| gpt-5.5 second, combined 40+60 | 0.5575 | 0.4425 |
+| Two-judge mean | 0.58875 | 0.41125 |
+
+Safe claim:
+
+> On a fresh 100-case holdout, the frozen v9 cognitive-cell stack beat a plain strong-model baseline under two standardized OpenAI judges, with mean architecture preference around 0.589.
+
+## Caution
+
+This is an engineering validation result, not a universal claim of superiority over frontier models. Larger benchmarks, human evaluation, ablations, and cross-provider validation are still needed.
+
 ## Cost note
 
 `/health` costs nothing.
@@ -134,82 +135,16 @@ autonomy_mode = "suggest"
 human-in-the-loop
 no automatic external action execution
 ~~~
----
 
-# Public usage
+## Known weaknesses
 
-## Install
+- Atomic observation remains weaker because pure logging competes against advice/explanation.
+- Contextual observation remains mixed when direct action beats record/analyze behavior.
+- Persona shift is weaker under the second judge.
+- Writing support is improved but not consistently superior.
 
-~~~bash
-pip install "cognitive-cell[server]"
-~~~
+## What this is not
 
-## Python usage
+Cognitive Cell is not AGI, not a production-autonomous agent, and not a claim of universal superiority over frontier models.
 
-~~~python
-from cognitive_cell import CognitiveCellRequest, CognitiveCellV9
-
-cell = CognitiveCellV9()
-
-request = CognitiveCellRequest(
-    statement="Blue colour is observed.",
-    interaction_mode="workflow_component",
-    autonomy_mode="log",
-)
-
-result = cell.run(request)
-
-print(result.response_text)
-print(result.trace)
-~~~
-
-## CLI usage
-
-~~~bash
-cognitive-cell --event-json examples/event.example.json
-~~~
-
-## HTTP sidecar usage
-
-Start the server:
-
-~~~bash
-python -m uvicorn cognitive_cell.server.app:app --port 8000
-~~~
-
-Check health without model calls:
-
-~~~bash
-curl -s http://127.0.0.1:8000/health
-~~~
-
-Send an event:
-
-~~~bash
-curl -s -X POST http://127.0.0.1:8000/v1/sidecar \
-  -H "Content-Type: application/json" \
-  -d @examples/event.example.json
-~~~
-
-## Cost note
-
-`/health` costs nothing.
-
-`/v1/sidecar` and `cognitive-cell --event-json ...` call the configured model and may incur API cost.
-
-## Production posture
-
-Start with:
-
-~~~text
-autonomy_mode = "suggest"
-human-in-the-loop
-no automatic external action execution
-~~~
-
-## Important
-
-Cognitive Cell is a context-sensitive workflow control layer.
-
-It is not AGI, not a production-autonomous agent, and not a claim of universal superiority over frontier models.
-
+It is a workflow-control layer that helps decide whether to record, clarify, analyze, plan, answer directly, or escalate.
