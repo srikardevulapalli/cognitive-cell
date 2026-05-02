@@ -32,7 +32,7 @@ Fresh holdout-v1, 100 cases:
 
 Safe claim:
 
-> On a fresh 100-case holdout, the frozen v9 cognitive-cell stack beat a plain strong-model baseline under two standardized Op judges, with mean architecture preference around 0.589.
+> On a fresh 100-case holdout, the frozen v9 cognitive-cell stack beat a plain strong-model baseline under two standardized OpenAI judges, with mean architecture preference around 0.589.
 
 ## Caution
 
@@ -41,10 +41,10 @@ This is an engineering validation result, not a universal claim of superiority o
 ## Install
 
 ~~~bash
-pip install -e .
+pip install "cognitive-cell[server]"
 ~~~
 
-## Planned usage
+## Python usage
 
 ~~~python
 from cognitive_cell.lego import CognitiveCellV9, CognitiveCellRequest
@@ -81,3 +81,52 @@ print(result.trace)
 - Contextual observation remains mixed when direct action beats record/analyze behavior.
 - Persona shift is weaker under the second judge.
 - Writing support is improved but not consistently superior.
+
+
+## CLI usage
+
+Create an event JSON file, then run:
+
+~~~bash
+cognitive-cell --event-json examples/event.example.json
+~~~
+
+This calls the model and may incur API cost.
+
+## HTTP sidecar usage
+
+Start the server:
+
+~~~bash
+python -m uvicorn cognitive_cell.server.app:app --port 8000
+~~~
+
+Check health without model calls:
+
+~~~bash
+curl -s http://127.0.0.1:8000/health
+~~~
+
+Send an enterprise event:
+
+~~~bash
+curl -s -X POST http://127.0.0.1:8000/v1/sidecar \
+  -H "Content-Type: application/json" \
+  -d @examples/event.example.json
+~~~
+
+## Cost note
+
+`/health` costs nothing.
+
+`/v1/sidecar` and `cognitive-cell --event-json ...` call the configured model and may incur API cost.
+
+## Recommended production posture
+
+Start with:
+
+~~~text
+autonomy_mode = "suggest"
+human-in-the-loop
+no automatic external action execution
+~~~
