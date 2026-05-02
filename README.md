@@ -134,3 +134,82 @@ autonomy_mode = "suggest"
 human-in-the-loop
 no automatic external action execution
 ~~~
+---
+
+# Public usage
+
+## Install
+
+~~~bash
+pip install "cognitive-cell[server]"
+~~~
+
+## Python usage
+
+~~~python
+from cognitive_cell import CognitiveCellRequest, CognitiveCellV9
+
+cell = CognitiveCellV9()
+
+request = CognitiveCellRequest(
+    statement="Blue colour is observed.",
+    interaction_mode="workflow_component",
+    autonomy_mode="log",
+)
+
+result = cell.run(request)
+
+print(result.response_text)
+print(result.trace)
+~~~
+
+## CLI usage
+
+~~~bash
+cognitive-cell --event-json examples/event.example.json
+~~~
+
+## HTTP sidecar usage
+
+Start the server:
+
+~~~bash
+python -m uvicorn cognitive_cell.server.app:app --port 8000
+~~~
+
+Check health without model calls:
+
+~~~bash
+curl -s http://127.0.0.1:8000/health
+~~~
+
+Send an event:
+
+~~~bash
+curl -s -X POST http://127.0.0.1:8000/v1/sidecar \
+  -H "Content-Type: application/json" \
+  -d @examples/event.example.json
+~~~
+
+## Cost note
+
+`/health` costs nothing.
+
+`/v1/sidecar` and `cognitive-cell --event-json ...` call the configured model and may incur API cost.
+
+## Production posture
+
+Start with:
+
+~~~text
+autonomy_mode = "suggest"
+human-in-the-loop
+no automatic external action execution
+~~~
+
+## Important
+
+Cognitive Cell is a context-sensitive workflow control layer.
+
+It is not AGI, not a production-autonomous agent, and not a claim of universal superiority over frontier models.
+
