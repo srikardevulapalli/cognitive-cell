@@ -1,0 +1,22 @@
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.DS_Store
+
+dist/
+build/
+*.egg-info/
+
+.env
+.env.*
+OPENAI_API_KEY*
+GEMINI_API_KEY*
+
+reports/
+runs/
+
+# Keep only placeholder data files unless intentionally added.
+data/*.jsonl
+!data/.gitkeep

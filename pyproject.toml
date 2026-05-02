@@ -1,0 +1,60 @@
+[project]
+name = "cognitive-cell"
+version = "0.9.1"
+description = "A context-sensitive cognitive control stack for workflow AI."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [
+  { name = "Srikar Devulapalli" }
+]
+keywords = [
+  "ai",
+  "agents",
+  "workflow",
+  "llm",
+  "routing",
+  "enterprise",
+  "cognitive-control"
+]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Developers",
+  "Intended Audience :: Science/Research",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+  "Topic :: Software Development :: Libraries :: Python Modules"
+]
+dependencies = [
+  "openai>=1.0.0"
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.0.0",
+  "build>=1.2.0",
+  "twine>=5.0.0"
+]
+server = [
+  "fastapi>=0.110.0",
+  "uvicorn>=0.27.0"
+]
+
+[project.urls]
+Homepage = "https://github.com/YOUR_GITHUB_USERNAME/cognitive-cell"
+Repository = "https://github.com/YOUR_GITHUB_USERNAME/cognitive-cell"
+Issues = "https://github.com/YOUR_GITHUB_USERNAME/cognitive-cell/issues"
+
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[project.scripts]
+cognitive-cell = "cognitive_cell.cli.main:main"
