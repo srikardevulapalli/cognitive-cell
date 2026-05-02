@@ -42,7 +42,7 @@ request = CognitiveCellRequest(
     autonomy_mode="log",
 )
 
-result =l.run(request)
+result = cell.run(request)
 
 print(result.response_text)
 print(result.trace)

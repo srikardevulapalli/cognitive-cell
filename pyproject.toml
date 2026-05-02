@@ -1,6 +1,6 @@
 [project]
 name = "cognitive-cell"
-version = "0.9.3"
+version = "0.9.4"
 description = "A context-sensitive cognitive control stack for workflow AI."
 readme = "README.md"
 requires-python = ">=3.10"
