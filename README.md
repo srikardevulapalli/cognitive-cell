@@ -148,3 +148,26 @@ no automatic external action execution
 Cognitive Cell is not AGI, not a production-autonomous agent, and not a claim of universal superiority over frontier models.
 
 It is a workflow-control layer that helps decide whether to record, clarify, analyze, plan, answer directly, or escalate.
+
+## Enterprise sidecar pilot
+
+Cognitive Cell v9 passed a 100-event enterprise sidecar pilot across:
+
+- growth/product analytics
+- support/operations
+- data-pipeline reliability
+- risk/compliance
+- operations/process workflows
+
+Pilot result:
+
+| Metric | Result |
+|---|---:|
+| Useful first move | 1.00 |
+| Too vague | 0.00 |
+| Unsafe or overreaching | 0.00 |
+| Trace useful | 1.00 |
+
+See: `docs/PILOT_100_REPORT.md`
+
+Caution: this is a curated pilot result, not a claim of universal superiority.
