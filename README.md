@@ -171,3 +171,26 @@ Pilot result:
 See: `docs/PILOT_100_REPORT.md`
 
 Caution: this is a curated pilot result, not a claim of universal superiority.
+
+
+## 100-event ablation
+
+Full Cognitive Cell v9 was compared against a plain direct baseline on the 100-event enterprise sidecar pilot.
+
+Result:
+
+| Preferred output | Count | Rate |
+|---|---:|---:|
+| Full v9 | 44 | 0.44 |
+| Baseline | 21 | 0.21 |
+| Tie | 35 | 0.35 |
+
+Full v9 was preferred or tied in:
+
+~~~text
+79 / 100 = 0.79
+~~~
+
+See: `docs/ABLATION_100_REPORT.md`
+
+Caution: this is a curated enterprise sidecar ablation, not a universal benchmark.
