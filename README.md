@@ -194,3 +194,27 @@ Full v9 was preferred or tied in:
 See: `docs/ABLATION_100_REPORT.md`
 
 Caution: this is a curated enterprise sidecar ablation, not a universal benchmark.
+
+## 100-event component ablation
+
+Full Cognitive Cell v9 was compared against its simpler components and a plain direct baseline on the 100-event enterprise sidecar pilot.
+
+| Output | Preferred count |
+|---|---:|
+| Full v9 | 77 |
+| Plain direct | 9 |
+| Direct artifact | 13 |
+| Workflow artifact | 0 |
+| Selector without finalizer | 0 |
+| Tie | 1 |
+
+Full v9 was preferred or tied in:
+
+~~~text
+78 / 100 = 0.78
+~~~
+
+This supports the route-select-render architecture: internal artifacts are useful for reasoning and traceability, but finalizer-v9 is important for converting them into user-facing answers.
+
+See: `docs/COMPONENT_ABLATION_100_REPORT.md`
+
