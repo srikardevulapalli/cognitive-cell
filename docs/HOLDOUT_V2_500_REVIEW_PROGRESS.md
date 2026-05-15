@@ -2,7 +2,7 @@
 
 ## Status
 
-Chunks 01, 02, and 03 reviewed.
+Chunks 01, 02, 03, and 04 reviewed.
 
 ## Chunk 01
 
@@ -34,20 +34,28 @@ Chunks 01, 02, and 03 reviewed.
 | Family correct | 1.00 |
 | Needs revision | 0.01 |
 
-## Chunk 02 revision
+## Chunk 04
 
-One contextual observation case was revised so that a partially blocked fire exit prompts prompt safe clearance or notifying facilities, rather than merely scheduling later clearance.
+| Metric | Result |
+|---|---:|
+| Cases reviewed | 100 |
+| Case quality | 1.00 |
+| Context sufficient | 1.00 |
+| Family correct | 1.00 |
+| Needs revision | 0.01 |
 
-## Chunk 03 revision
+## Revisions so far
 
-One contextual observation case was revised so that a chemical storage room left ajar prompts securing/locking the room or notifying responsible staff before or alongside access-log review.
+- Chunk 02: one contextual observation expected contract revised for partially blocked fire exit.
+- Chunk 03: one contextual observation expected contract revised for chemical storage room left ajar.
+- Chunk 04: one analysis-enterprise notes typo corrected from `usage/reention` to `usage/retention`.
 
 ## Current reviewed total
 
 ~~~text
-300 / 500 cases reviewed
+400 / 500 cases reviewed
 ~~~
 
 ## Next step
 
-Review chunks 04–05.
+Review chunk 05.
