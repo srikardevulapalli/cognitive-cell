@@ -2,7 +2,7 @@
 
 ## Status
 
-v10 patch not justified yet.
+v10 patch is not justified yet.
 
 ## Result
 
@@ -36,10 +36,14 @@ Full v9 trace useful rate:
 
 The v10-dev smoke did not strongly reproduce the holdout-v2 weak-family problem. Full v9 remained preferred or tied in most sampled cases.
 
-The clearest remaining weakness is planning concreteness: in several planning cases, the plain direct baseline gave a sharper first step.
+The clearest remaining weakness is planning concreteness, where the plain direct baseline gave sharper first steps on some cases.
 
 ## Decision
 
 Do not patch v10 yet.
 
-If more confidence is needed, expand to a 50-case v10-dev evaluation before changing runtime behavior.
+If more confidence is needed, run a larger v10-dev evaluation before changing runtime behavior.
+
+## Product framing
+
+Cognitive Cell v9 should remain framed as a workflow sidecar and context-sensitive control layer, not as a universal replacement for direct assistant answers.
