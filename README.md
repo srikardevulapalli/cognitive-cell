@@ -218,3 +218,16 @@ This supports the route-select-render architecture: internal artifacts are usefu
 
 See: `docs/COMPONENT_ABLATION_100_REPORT.md`
 
+## Documentation
+
+Key docs:
+
+- [Quickstart](docs/QUICKSTART.md)
+- [API Reference](docs/API_REFERENCE.md)
+- [Claims and Limitations](docs/CLAIMS_AND_LIMITATIONS.md)
+- [Master Evidence Summary](docs/MASTER_EVIDENCE_SUMMARY.md)
+- [100-event Component Ablation](docs/COMPONENT_ABLATION_100_REPORT.md)
+- [Holdout-v2 500-case Review](docs/HOLDOUT_V2_500_FINAL_REPORT.md)
+- [Technical Report Draft](docs/TECHNICAL_REPORT_DRAFT.md)
+- [Documentation Index](docs/INDEX.md)
+
