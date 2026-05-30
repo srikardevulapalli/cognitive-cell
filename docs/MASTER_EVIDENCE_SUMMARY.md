@@ -151,3 +151,24 @@ It should not be framed as a universal assistant replacement.
 - consciousness
 - universal superiority over frontier models
 - production-autonomous agent
+
+## 100-case manual blinded adjudication
+
+A manual blinded adjudication pass was completed on the enterprise 100-case direct-baseline comparison.
+
+| Preferred output | Count | Rate |
+|---|---:|---:|
+| Full v9 | 44 | 0.44 |
+| Baseline | 21 | 0.21 |
+| Tie | 35 | 0.35 |
+
+Full v9 was preferred or tied in:
+
+~~~text
+79 / 100 = 0.79
+~~~
+
+Important caveat:
+
+This was a manual adjudication pass, not an independent multi-rater human evaluation. Independent raters are still needed for paper-grade human evaluation.
+
