@@ -919,3 +919,9 @@ holdout-v2 should not be used for tuning.
 
 <!-- AI_TINKERERS_DEMO_NARRATIVE_END -->
 
+## AI Tinkerers demo narrative
+
+For a builder-focused walkthrough of the project journey, architecture, evals, failures, and demo flow, see:
+
+- [AI Tinkerers Demo README](docs/AI_TINKERERS_DEMO_README.md)
+
