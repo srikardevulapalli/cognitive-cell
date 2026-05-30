@@ -131,3 +131,20 @@ Current evaluations include curated pilot sets and manual ratings. Broader exter
 ## Main claim
 
 Cognitive Cell v9 is a public, installable, benchmarked workflow-control layer whose full route-select-render stack outperforms simpler direct and component baselines in curated enterprise sidecar evaluations, while broader holdout-v2 testing shows it should not be framed as a universal assistant replacement.
+
+## Manual blinded adjudication
+
+A manual blinded adjudication pass was completed on the enterprise 100-case direct-baseline comparison.
+
+The decoded result was:
+
+| Preferred output | Count | Rate |
+|---|---:|---:|
+| Full v9 | 44 | 0.44 |
+| Baseline | 21 | 0.21 |
+| Tie | 35 | 0.35 |
+
+Full v9 was preferred or tied in 79 / 100 cases.
+
+This result should be interpreted as manual adjudication, not independent multi-rater human evaluation. Independent raters remain future work.
+
