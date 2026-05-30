@@ -71,3 +71,17 @@ A v10 patch is not justified yet based on the v10-dev 20-case smoke.
 Cognitive Cell v9 is best framed as:
 
 > A benchmarked, installable, context-sensitive workflow-control layer for routing, selecting, rendering, and tracing AI first responses.
+
+## Human evaluation status
+
+Current status:
+
+~~~text
+manual blinded adjudication completed
+independent human evaluation not yet completed
+~~~
+
+The manual adjudication result supports the enterprise sidecar ablation, but should not be reported as independent multi-rater human evaluation.
+
+Paper-grade human evaluation still requires independent raters.
+
