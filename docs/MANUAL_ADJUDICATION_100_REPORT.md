@@ -1,0 +1,39 @@
+# Cognitive Cell v9 — 100-Case Manual Blinded Adjudication
+
+## Status
+
+Manual adjudication completed.
+
+## Important note
+
+This was a manual adjudication pass applied to blinded rater sheets.
+
+It should not be described as two independent human raters. For paper-grade human evaluation, independent raters are still required.
+
+## Result
+
+Decoded source preferences:
+
+| Preferred output | Count | Rate |
+|---|---:|---:|
+| Full v9 | 44 | 0.44 |
+| Baseline | 21 | 0.21 |
+| Tie | 35 | 0.35 |
+
+Full v9 was preferred or tied in:
+
+~~~text
+79 / 100 = 0.79
+~~~
+
+## Interpretation
+
+The manual adjudication supports the earlier direct-baseline ablation result: full Cognitive Cell v9 is preferred or tied in most enterprise sidecar cases.
+
+## Caveat
+
+This is not an independent multi-rater human evaluation. It is useful as an internal adjudication record and preparation step for a later independent human evaluation.
+
+## Next step
+
+Send blinded rater CSVs to at least two iependent people and compare their results using the existing rater agreement scripts.
