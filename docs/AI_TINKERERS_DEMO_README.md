@@ -4,19 +4,11 @@
 
 **I Built a Traffic Controller for LLM Workflows: Route, Select, Render**
 
-Alternative title:
-
-**Cognitive Cell: What I Learned Building a Control Layer for LLM Workflows**
-
----
-
 ## One-sentence explanation
 
-I built a small control layer for LLM workflows that decides **what kind of response is appropriate before answering**: should the AI record, clarify, analyze, plan, answer directly, or escalate?
+Cognitive Cell is a small control layer for LLM workflows. Before the model answers, it decides what kind of response is appropriate: record, clarify, analyze, plan, answer directly, or escalate.
 
----
-
-## The easiest way to understand it
+## The simple idea
 
 Most LLM apps work like this:
 
@@ -34,17 +26,17 @@ user asks something
 → return a trace explaining the decision
 ~~~
 
-It is like adding a **traffic controller** in front of an LLM.
+It is like adding a traffic controller in front of an LLM.
 
-The point is not to build a new foundation model. The point is to make existing modetter inside workflows.
+The point is not to build a new foundation model. The point is to make existing models behave better inside workflows.
 
 ---
 
 ## Why I built it
 
-I started with a simple question:
+I started with a simple problem:
 
-> Why does the same sentence sometimes need totally different AI behavior?
+> The same sentence can require different AI behavior depending on context.
 
 Example:
 
@@ -80,27 +72,21 @@ Contact the carrier immediately and request a reroute or hold.
 
 Same sentence. Different context. Different correct first move.
 
-That became the core idea:
-
-> AI systems should not only answer. They should first decide what kind of cognitive move is appropriate.
-
 ---
 
 ## What I built
 
-I built **Cognitive Cell**, a Python package and HTTP sidecar for context-sensitive workflow AI.
+Cognitive Cell is a Python package and HTTP sidecar for context-sensitive workflow AI.
 
-The accepted v9 stack is:
+Accepted v9 stack:
 
 ~~~text
 router-v4 → selector-v5 → finalizer-v9
 ~~~
 
-Each layer has a job.
-
 ### Router
 
-The router decides the response mode:
+Decides the response mode:
 
 ~~~text
 record
@@ -113,7 +99,7 @@ escalate
 
 ### Selector
 
-The selector chooses between possible pathways:
+Chooses the best pathway:
 
 ~~~text
 workflow-style response
@@ -122,25 +108,21 @@ direct-answer response
 
 ### Finalizer
 
-The finalizer turns internal reasoning artifacts into a useful human-facing answer.
+Turns internal reasoning artifacts into a useful human-facing response.
 
-This became the most important lesson:
+This was the biggest lesson:
 
 > Internal artifacts are not the product.
 
-Raw workflow artifacts are useful for traceability, but often weak as final answers. The finalizer is what makes the system usable.
+Traces and workflow records are useful internally, but they still need to be rendered clearly for humans.
 
 ---
 
-## How to install it
+## How to install
 
 ~~~bash
 pip install "cognitive-cell[server]"
 ~~~
-
-The package is public on PyPI as `cognitive-cell`.
-
----
 
 ## Python usage
 
@@ -151,7 +133,7 @@ cell = CognitiveCellV9()
 
 request = CognitiveCellRequest(
     statement="Blue colour is observed.",
-    interaction_mode="worw_component",
+    interaction_mode="workflow_component",
     autonomy_mode="log",
 )
 
@@ -163,29 +145,15 @@ print(result.selected_next_step_type)
 print(result.trace)
 ~~~
 
-Expected behavior:
-
-~~~text
-The system should record the observation instead of over-explaining it.
-~~~
-
----
-
 ## CLI usage
-
-Create an event JSON file, then run:
 
 ~~~bash
 cognitive-cell --event-json examples/event.example.json
 ~~~
 
-This calls the configured model and may incur API cost.
-
----
-
 ## HTTP sidecar usage
 
-Start the sidecar:
+Start the server:
 
 ~~~bash
 python -m uvicorn cognitive_cell.server.app:app --port 8000
@@ -205,167 +173,48 @@ curl -s -X POST http://127.0.0.1:8000/v1/sidecar \
   -d @examples/event.example.json
 ~~~
 
-The `/health` endpoint costs nothing. The `/v1/sidecar` endpoint calls the configured model.
+Cost note:
 
----
-
-## Example event payload
-
-~~~json
-{
-  "event_id": "evt_pricing_refunds_001",
-  "source": "growth_ops_monitor",
-  "event_type": "metric_anomaly",
-  "statement": "Refund requests doubled after the pricing page update. What should we examine first?",
-  "context": {
-    "world_facts": [
-      {
-        "fact_id": "f1",
-        "fact_type": "world_fact",
-        "fact_text": "The pricing page was updated yesterday."
-      }
-    ],
-    "constraints": [
-      "Prioritize high-signal first checks before broad analysis."
-    ],
-    "active_goals": [
-      "identify the first diagnostic step"
-    ]
-  },
-  "metadata": {
-    "persona": "growth operations analyst",
-    "time_pressure": "medium"
-  },
-  "interaction_mode": "workflow_component",
-  "autonomy_mode": "suggest"
-}
+~~~text
+/health costs nothing.
+/v1/sidecar and CLI calls use the configured model.
 ~~~
 
 ---
 
-## Feeding context into the system
+## What I will show live
 
-Cognitive Cell receives context through three channels:
-
-~~~text
-1. context_snapshot
-2. metadata
-3. interaction_mode + autonomy_mode
-~~~
-
-### context_snapshot
-
-~~~json
-{
-  "world_facts": [],
-  "constraints": [],
-  "active_goals": []
-}
-~~~
-
-### metadata
-
-~~~json
-{
-  "persona": "ops analyst",
-  "time_pressure": "medium"
-}
-~~~
-
-### behavior posture
-
-~~~text
-interaction_mode = workflow_component
-autonomy_mode = suggest
-~~~
-
-This lets the same input behave differently depending on workflow posture, urgency, persona, and goal.
-
----
-
-## The hard-won lesson
-
-Early versions produced structured workflow artifacts.
-
-They looked architecturally elegant, but users and judges often preferred the plain baseline because the baseline gave a smoother answer.
-
-The surprising lesson was:
-
-> Internal structure is not enough. The final user-facing rendering matters.
-
-That is why the architecture became:
-
-~~~text
-route → select → render
-~~~
-
-Instead of exposing raw internal artifacts, finalizer-v9 renders the selected artifact into something useful.
-
----
-
-## Journey from idea to now
-
-### Stage 1 — Original idea
-
-I started with a “cognitive cell” idea: a reusable unit that can appraise context, focus attention, choose a response mode, and produce a trace.
-
-At this stage, it was more architecture tt.
-
-### Stage 2 — Router
-
-I built a router that could decide:
-
-~~~text
-record vs clarify vs analyze vs plan vs direct answer
-~~~
-
-This worked in simple demos, but it was brittle.
-
-### Stage 3 — Evals exposed the truth
-
-When I evaluated early versions against a plain baseline, the architecture initially lost.
-
-The problem was not that the idea was useless.
-
-The problem was that internal workflow outputs were not always good final answers.
-
-### Stage 4 — Selector
-
-I added a selector that could choose between workflow-style and direct-style pathways.
-
-This made the system more flexible.
-
-### Stage 5 — Finalizer
-
-The major unlock was finalizer-v9.
-
-Instead of exposing raw artifacts, the finalizer rendered a response that preserved the selected pathway but sounded useful to a human.
-
-### Stage 6 — Package
-
-I moved it from research scripts into an installable package:
+### 1. No-cost import check
 
 ~~~bash
-pip install "cognitive-cell[server]"
+python examples/ai_tinkerers_live_demo.py --no-model
 ~~~
 
-It now supports:
+### 2. Context-sensitive request examples
 
-~~~text
-Python API
-CLI
-HTTP sidecar
+~~~bash
+python examples/ai_tinkerers_live_demo.py --show-payloads
 ~~~
 
-### Stage 7 — Pilot and aen I tested whether the architecture actually helped.
+### 3. Optional live model run
+
+~~~bash
+export OPENAI_API_KEY="your_key_here"
+python examples/ai_tinkerers_live_demo.py --live
+~~~
+
+### 4. HTTP health check
+
+~~~bash
+python -m uvicorn cognitive_cell.server.app:app --port 8000
+curl -s http://127.0.0.1:8000/health
+~~~
 
 ---
 
 ## Metrics and evidence
 
 ### Fresh holdout-v1
-
-On a fresh 100-case holdout:
 
 | Judge | Architecture preference |
 |---|---:|
@@ -377,11 +226,7 @@ Safe claim:
 
 > On a fresh 100-case holdout, the frozen v9 stack beat a plain strong-model baseline under two standardized OpenAI judges, with mean architecture preference around 0.589.
 
----
-
 ### 100-event enterprise sidecar pilot
-
-I ran the system on 100 enterprise-style workflow events.
 
 | Metric | Result |
 |---|---:|
@@ -390,15 +235,7 @@ I ran the system on 100 enterprise-style workflow events.
 | Unsafe or overreaching | 0.00 |
 | Trace useful | 1.00 |
 
-Plain English:
-
-> In this curated workflow setting, the system gave useful, safe first moves and useful traces.
-
----
-
-### 100-event direct-baseline ablation
-
-I compared full v9 against a plain direct baseline.
+### Direct-baseline ablation
 
 | Preferred output | Count |
 |---|---:|
@@ -406,31 +243,13 @@ I compared full v9 against a plain direct baseline.
 | Baseline | 21 |
 | Tie | 35 |
 
-Full v9 was preferred or tied in:
+Full v9 preferred or tied:
 
 ~~~text
 79 / 100 = 0.79
 ~~~
 
-Plain English:
-
-> The architecture usually matched or beat a normal direct answer in enterprise sidecar tasks.
-
----
-
-### 100-event component ablation
-
-I compared full v9 against its own simpler pieces:
-
-~~~text
-full v9
-plain direct
-direct artifact
-workflow artifact
-selector without finalizer
-~~~
-
-Result:
+### Component ablation
 
 | Output | Preferred count |
 |---|---:|
@@ -441,15 +260,11 @@ Result:
 | Selector without finalizer | 0 |
 | Tie | 1 |
 
-Full v9 was preferred or tied in:
+Full v9 preferred or tied:
 
 ~~~text
 78 / 100 = 0.78
 ~~~
-
-Plain English:
-
-> The complete route-select-render stack was much better than exposing raw intermediate pieces.
 
 This was the strongest architecture result.
 
@@ -467,57 +282,37 @@ In a 50-case holdout-v2 smoke test:
 | Baseline | 24 |
 | Tie | 3 |
 
-Full v9 was preferred or tied in:
+Full v9 preferred or tied:
 
 ~~~text
 26 / 50 = 0.52
 ~~~
 
-Plain English:
+Interpretation:
 
-> Cognitive Cell is not automatically better for every normal assistant task.
-
-It is strongest when context and workflow posture matter.
-
-It is weaker when the user simply wants a normal direct assistant response, especially in:
-
-~~~text
-writing
-tutoring
-persona adaptation
-general planning
-some timing-sensitive everyday tasks
-~~~
-
-That is why the correct claim is:
-
-> Cognitive Cell is a workflow-control layer, not a universal assistant replacement.
+> Cognitive Cell is strongest as a workflow sidecar and context-sensitive control layer. It is not a universal assistant replacement.
 
 ---
 
-## Manual adjudication
+## What broke
 
-A manual blinded adjudication pass was completed on the 100-case enterprise direct-baseline comparison.
+### 1. The router over-clarified
 
-| Preferred output | Count |
-|---|---:|
-| Full v9 | 44 |
-| Baseline | 21 |
-| Tie | 35 |
+Early versions asked clarifying questions when they should have recorded or answered.
 
-Full v9 was preferred or tied in:
+### 2. Workflow artifacts were too raw
 
-~~~text
-79 / 100 = 0.79
-~~~
+Structured artifacts were useful internally, but weak as user-facing answers.
 
-Important caveat:
+### 3. The baseline was stronger than expected
 
-This was manual adjudication, not independent multi-rater human evaluation. Independent raters remain future work.
+Plain direct answers were often useful and safe.
+
+This forced the architecture to become more honest and more useful.
 
 ---
 
-## What another builder can reuse
+## Builder takeaway
 
 The reusable pattern is:
 
@@ -525,13 +320,13 @@ The reusable pattern is:
 route → select → render
 ~~~
 
-Do noild workflow AI as only:
+If you are building workflow AI, do not only do:
 
 ~~~text
 prompt → answer
 ~~~
 
-Build it as:
+Instead:
 
 ~~~text
 input + context
@@ -542,129 +337,9 @@ input + context
 → expose a trace
 ~~~
 
-This pattern is useful for:
+Also evaluate internal artifacts separately from final answers.
 
-~~~text
-support triage
-incident response
-ops monitoring
-data-quality alerts
-compliance workflows
-customer communication drafts
-analytics first-check recommendations
-workflow-sidecar systems
-~~~
-
----
-
-## What broke
-
-Three things broke repeatedly:
-
-### 1. The router over-clarified
-
-Early versions asked clarifying questions even when they should record or answer.
-
-### 2. Workflow artifacts looked good internally but bad externally
-
-Structured artifacts were useful as traces, but not always good final answers.
-
-### 3. The baseline was stronger than expected
-
-Plain direct responses were often useful and safe.
-
-The result was a more disciplined claim:
-
-> Cognitive Cell adds value when response mode, context, traceability, and workflow posture m
-## What surprised me
-
-The finalizer mattered more than expected.
-
-The router and selector were necessary, but raw selected artifacts were not enough.
-
-The strongest architecture lesson became:
-
-> Internal artifacts are not the product.
-
----
-
-## What I would show live
-
-### 1. Install
-
-~~~bash
-pip install "cognitive-cell[server]"
-~~~
-
-### 2. Python API
-
-~~~python
-from cognitive_cell import CognitiveCellRequest, CognitiveCellV9
-~~~
-
-### 3. Health endpoint
-
-~~~bash
-python -m uvicorn cognitive_cell.server.app:app --port 8000
-curl -s http://127.0.0.1:8000/health
-~~~
-
-### 4. Context-sensitive example
-
-Show:
-
-~~~text
-The package label shows the wrong city.
-~~~
-
-Then show two contexts:
-
-~~~text
-warehouse / low-cost correction
-medicine / already in transit / high urgency
-~~~
-
-### 5. Trace
-
-Show:
-
-~~~text
-selected_label
-selected_response_mode
-selected_next_step_type
-trace
-~~~
-
-### 6. Evals
-
-Show:
-
-~~~text
-100-event pilot
-direct-baseline ablation
-component ablation
-holdout-v2 limitation
-~~~
-
----
-
-## What I would say in 90 seconds
-
-I built Cognitive Cell, a small control layer for workflow AI.
-
-The idea is that before an LLM answers, it should decide what kind of move is appropriate: record, clarify, analyze, plan, answer directly, or escalate.
-
-The architecture is route-select-render. A router decides the response mode, a selector chooses between workflow and direct pathways, and a finalizer turns the selected internal artifact into a useful human-facing answer.
-
-The hard lesson was that internal artifacts are not the product. Early versions produced structured outputs but lost to plain baselines because the final response was not human-useful enough. Finalizer-v9 became the key layer.
-
-I packaged this as `cognitive-cell` on PyPI with a Python API, CLI, and HTTP sidecar.
-
-In curated enterprise sidecar evaluations, full v9 was preferred or tied in 79/100 cases against a direct baseline, and 78/100 cases against its own simpler components.
-
-But broader holdout-v2 testing was borderline, so the honest framing is: this is not AGI and not a universal assistant replacement. It is strongest as a context-sensitive workflow sidecar.
-
-The reusable builder takeaway is: do not just prompt for the final answer. Route first, select the pathway, then render.
+A trace can be useful internally but bad as a user-facing response.
 
 ---
 
@@ -689,59 +364,63 @@ a workflow-control layer around existing LLMs
 
 ---
 
-## Best framing
+## Tying it back to the original cognitive-cell idea
 
-Use this:
+The original idea was a reusable cognitive unit that could:
 
-> Cognitive Cell is a workflow-control layer for context-sensitive AI responses.
+~~~text
+observe
+appraise context
+focus attention
+choose a cognitive move
+act through a pathway
+return a response
+expose a trace
+eventually update context over time
+~~~
 
-Do not use this:
+Current v9 implements the stateless core:
 
-> Cognitive Cell is AGI.
+| Original idea | Current v9 |
+|---|---|
+| input/perception | statement |
+| world model | context_snapshot |
+| appraisal | trace factors |
+| focus | focus object / selected pathway |
+| cognitive move | response mode |
+| pathway choice | selector-v5 |
+| expression | finalizer-v9 |
+| trace | response trace |
+| memory | future external adapter |
 
-Use this:
-
-> It improves first-response behavior in workflow and enterprise sidecar settings.
-
-Do not use this:
-
-> It beats frontier models generally.
-
-Use this:
-
-> The full route-select-render stack beat or tied simpler baselines in curated enterprise evaluations.
-
-Do not use this:
-
-> It is universally better than direct prompting.
+The next frontier is an explicit memory/context layer around the stateless cell.
 
 ---
 
-## Next research steps
+## Best 90-second explanation
 
-The next research steps are:
+I built Cognitive Cell, a small control layer for workflow AI.
 
-~~~text
-1. Independent human evaluation.
-2. Technical report polish.
-3. Cost and latency report.
-4. Broader external validation.
-5. Memory/context adapter prototype.
-6. Only consider v10 after a separate dev-set diagnosis.
-~~~
+The idea is that before an LLM answers, it should decide what kind of move is appropriate: record, clarify, analyze, plan, answer directly, or escalate.
 
-Current decision:
+The architecture is route-select-render. A router decides the response mode, a selector chooses between workflow and direct pathways, and a finalizer turns the selected internal artifact into a useful human-facing answer.
 
-~~~text
-v9 remains the public release.
-v10 is not justified yet.
-holdout-v2 should not be used for tuning.
-~~~
+The hard lesson was that internal artifacts are not the product. Early versions produced structured outputs but lost to plain baselines because the final response was not human-useful enough. Finalizer-v9 became the key layer.
+
+I packaged this as `cognitive-cell` on PyPI with a Python API, CLI, and HTTP sidecar.
+
+In curated enterprise sidecar evaluations, full v9 was preferred or tied in 79/100 cases against a direct baseline, and 78/100 cases against its own simpler components.
+
+But broader holdout-v2 testing was borderline, so the honest framing is: this is not AGI and not a universal assistant replacement. It is strongest as a context-sensitive workflow sidecar.
+
+The reusable builder takeaway is: do not just prompt for the final answer. Route first, select the pathway, then render.
 
 ---
 
 ## Best demo takeaway
 
-The strongest demo line is:
+The reusable lesson is not “use my package.”
 
-> The reusable lesson is not “use my package.” It is: when building workflow AI, separate route, select, and render — and evaluate internal artifacts separately from final answers.
+It is:
+
+> When building workflow AI, separate route, select, and render — and evaluate internal artifacts separately from final answers.
